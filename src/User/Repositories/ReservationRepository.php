@@ -5,6 +5,7 @@ namespace User\Repositories;
 use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 
 class ReservationRepository
 {
@@ -45,6 +46,10 @@ class ReservationRepository
 
     private function validateReservation(Room $room, array $data)
     {
+        if ($room->reservations()->exists()) {
+            throw new \Exception('O quarto selecionado já está reservado.', Response::HTTP_UNAUTHORIZED);
+        }
+
         $startDate = Carbon::create($data['start_date']);
         $endDate = Carbon::create($data['end_date']);
 

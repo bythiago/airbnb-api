@@ -30,6 +30,23 @@ class ReservationTest extends TestCase
         $this->assertArrayHasKey('start_date', $response);
     }
 
+    public function test_create_a_reservation_exception_room_is_already_booked()
+    {
+        try {
+            $payload = [
+                'room_id' => 3,
+                'start_date' => '2022-08-12',
+                'end_date' => '2022-08-15',
+            ];
+
+            $repository = app(ReservationRepository::class);
+            $repository->createReservation($payload);
+            $repository->createReservation($payload);
+        } catch (\Exception $exception) {
+            $this->assertStringMatchesFormat($exception->getMessage(), 'O quarto selecionado já está reservado.');
+        }
+    }
+
     public function test_create_a_reservation_with_room_is_invalid()
     {
         $payload = [
