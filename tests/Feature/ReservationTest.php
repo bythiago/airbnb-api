@@ -57,4 +57,10 @@ class ReservationTest extends TestCase
         $response = $this->getJson('/api/reservations/1');
         $response->assertStatus(Response::HTTP_OK);
     }
+
+    public function test_list_a_reservation_by_id_exception_not_exists()
+    {
+        $response = $this->getJson('/api/reservations/99');
+        $response->assertJson(['message' => 'Reserva não existe.']);
+    }
 }

@@ -6,27 +6,27 @@ use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationRepository
 {
-    private User $user;
-
     private Room $room;
 
-    public function __construct(User $user, Room $room)
+    public function __construct(Room $room)
     {
-        $this->user = $user;
         $this->room = $room;
     }
 
     public function all()
     {
-        return $this->user->with('reservations')->whereId(2)->get();
+        return $this->authenticateUser()->reservations()->get();
     }
 
     public function findById($id)
     {
-        return $this->user->findOrFail(2)->reservations()->where('room_id', $id)->firstOrFail();
+        return $this->authenticateUser()->reservations()->where('room_id', $id)->firstOr(function () {
+            throw new \Exception('Reserva não existe.', Response::HTTP_NOT_FOUND);
+        });
     }
 
     public function createReservation(array $data)
@@ -39,9 +39,14 @@ class ReservationRepository
 
         $payload = $this->validateReservation($room, $data);
 
-        $this->user->find(2)->reservations()->attach($room, $payload);
+        $this->authenticateUser()->reservations()->attach($room, $payload);
 
         return $payload;
+    }
+
+    private function authenticateUser(): User
+    {
+        return Auth::user();
     }
 
     private function validateReservation(Room $room, array $data)

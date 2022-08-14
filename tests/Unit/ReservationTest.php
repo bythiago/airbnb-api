@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 use User\Repositories\ReservationRepository;
 
@@ -14,6 +16,11 @@ class ReservationTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        Passport::actingAs(
+            User::factory()->create(),
+            ['create-servers']
+        );
     }
 
     public function test_create_a_reservation_success()
@@ -103,7 +110,7 @@ class ReservationTest extends TestCase
         $repository = app(ReservationRepository::class);
         $reservations = $repository->all();
 
-        $this->assertArrayHasKey('id', $reservations->first());
+        $this->assertIsArray($reservations->toArray());
     }
 
     public function test_list_a_reservation_by_id()
