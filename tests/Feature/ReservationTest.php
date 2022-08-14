@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\Response;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 use User\Repositories\ReservationRepository;
 
@@ -15,6 +17,11 @@ class ReservationTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        Passport::actingAs(
+            User::factory()->create(),
+            ['create-servers']
+        );
     }
 
     public function test_list_all_reversations()

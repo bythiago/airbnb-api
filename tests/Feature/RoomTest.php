@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\Response;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class RoomTest extends TestCase
@@ -15,6 +17,11 @@ class RoomTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        Passport::actingAs(
+            User::factory()->create(),
+            ['create-servers']
+        );
     }
 
     public function test_exception_http_too_many_requests()
