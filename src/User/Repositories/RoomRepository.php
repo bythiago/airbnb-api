@@ -14,9 +14,21 @@ class RoomRepository
         $this->model = $model->query();
     }
 
-    public function all()
+    public function all($reserved = null)
     {
-        return $this->model->with(['owner'])->get();
+        $query = $this->model->with(['owner']);
+
+        if (is_null($reserved)) {
+            return $query->get();
+        }
+
+        $query->when($reserved, function ($qb) {
+            return $qb->has('reservations');
+        })->when(! $reserved, function ($qb) {
+            return $qb->doesntHave('reservations');
+        });
+
+        return $query->get();
     }
 
     public function findById($id)

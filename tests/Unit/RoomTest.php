@@ -27,12 +27,28 @@ class RoomTest extends TestCase
         $this->assertArrayHasKey('id', $room);
     }
 
-    public function test_list_all_roms_with_success()
+    public function test_list_all_rooms_with_success()
     {
         $repository = app(RoomRepository::class);
         $rooms = $repository->all();
 
         $this->assertArrayHasKey('id', $rooms->first());
+    }
+
+    public function test_list_all_rooms_with_parameter_reservation_true()
+    {
+        $repository = app(RoomRepository::class);
+        $rooms = $repository->all(1);
+
+        $this->assertIsArray($rooms->toArray());
+    }
+
+    public function test_list_all_rooms_with_parameter_reservation_false()
+    {
+        $repository = app(RoomRepository::class);
+        $rooms = $repository->all(0);
+
+        $this->assertIsArray($rooms->toArray());
     }
 
     public function test_find_room_by_id_with_success()

@@ -3,37 +3,40 @@
 namespace User\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use User\Http\Requests\RoomRequest;
 use User\Repositories\RoomRepository;
 
 class RoomController extends Controller
 {
-    private $repository;
+    private $roomRepository;
 
-    public function __construct(RoomRepository $repository)
+    public function __construct(RoomRepository $roomRepository)
     {
-        $this->repository = $repository;
+        $this->roomRepository = $roomRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->repository->all();
+        $reserved = $request->query('reserved');
+
+        return $this->roomRepository->all($reserved);
     }
 
     public function show($id)
     {
-        return $this->repository->findById($id);
+        return $this->roomRepository->findById($id);
     }
 
     public function store(RoomRequest $request)
     {
         $data = $request->validated();
 
-        return $this->repository->create($data);
+        return $this->roomRepository->create($data);
     }
 
     public function destroy($id)
     {
-        return $this->repository->destroy($id);
+        return $this->roomRepository->destroy($id);
     }
 }
